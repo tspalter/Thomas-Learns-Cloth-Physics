@@ -73,22 +73,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>..\glut-3.7\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\imgui-master;..\glut-3.7\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\imgui-master;..\glut-3.7\include;..\stb-master;..\glad;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>..\glut-3.7\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\imgui-master;..\glut-3.7\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\imgui-master;..\glut-3.7\include;..\stb-master;..\glad;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>..\glut-3.7\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\imgui-master;..\glut-3.7\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\imgui-master;..\glut-3.7\include;..\stb-master;..\glad;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>..\glut-3.7\lib;$(LibraryPath)</LibraryPath>
-    <IncludePath>..\imgui-master;..\glut-3.7\include;$(IncludePath)</IncludePath>
+    <IncludePath>..\imgui-master;..\glut-3.7\include;..\stb-master;..\glad;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
