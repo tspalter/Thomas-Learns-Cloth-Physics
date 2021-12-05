@@ -5,7 +5,9 @@
 #ifndef POINT_H
 #define POINT_H
 
-#include <glm/glm.hpp>
+#include <Windows.h>
+#include <GL/glut.h>
+#include "MathFuncs.h"
 
 class Point {
 public:
@@ -30,8 +32,8 @@ public:
 	// check if point is anchored
 	bool isFixed;
 
-	// set function
-	void SetPosition(float pX, float pY, float pZ);
+	// set position of point at index [i][j]
+	void SetPosition(float pX, float pY, float pZ, int i, int j);
 
 	// ctor and dtor
 	Point();
@@ -50,7 +52,7 @@ public:
 	// Update point values
 	void Update(int sphereRadius, glm::vec3 objPos);
 
-	// Collision check
+	// Collision check with a sphere object
 	void CheckCollision(int radius, glm::vec3 objPos);
 
 };

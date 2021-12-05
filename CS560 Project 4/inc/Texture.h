@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 class Texture {
+public:
 	// basic Texture variables
 	glm::vec4 ambient;
 	glm::vec4 diffuse;
@@ -16,7 +17,7 @@ class Texture {
 	// set functions
 	void SetAmbient(float r, float g, float b, float a);
 	void SetSpecular(float r, float g, float b, float a);
-	void SetSpecular(float r, float g, float b, float a);
+	void SetDiffuse(float r, float g, float b, float a);
 	void SetShininess(float shine);
 
 	// ctor and dtor
