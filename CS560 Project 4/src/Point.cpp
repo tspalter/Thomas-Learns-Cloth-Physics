@@ -7,9 +7,9 @@
 float FRAMERATE = 60.0f;
 
 Point::Point() {
-	totalForce = new glm::vec3();
-	velocity = new glm::vec3();
-	normal = new glm::vec3();
+	totalForce = new Vec3();
+	velocity = new Vec3();
+	normal = new Vec3();
 	radius = 5;
 	numOfAdjTriangles = 0;
 }
@@ -22,8 +22,8 @@ void Point::SetPosition(float pX, float pY, float pZ, int i, int j) {
 	posJ = j;
 
 	// position variables
-	position = new glm::vec3(pX, pY, pZ);
-	prevPosition = new glm::vec3(pX, pY, pZ);
+	position = new Vec3(pX, pY, pZ);
+	prevPosition = new Vec3(pX, pY, pZ);
 }
 
 void Point::ClearForces() {
@@ -54,21 +54,33 @@ void Point::DebugDraw() {
 	glEnd();
 }
 
-glm::vec3* Point::VerletIntegrationToPosition() {
+Vec3* Point::VerletIntegrationToPosition() {
 	// create vector for the resulting position
-	glm::vec3* nextPos = new glm::vec3();
+	Vec3* nextPos = new Vec3();
 
 	// use Verlet integration to calculate each vector value
 	// next = 2*curr - prev + force*dt
-	nextPos->x = (2 * position->x) - prevPosition->x + totalForce->x * (1.0f / FRAMERATE);
-	nextPos->y = (2 * position->y) - prevPosition->y + totalForce->y * (1.0f / FRAMERATE);
-	nextPos->z = (2 * position->z) - prevPosition->z + totalForce->z * (1.0f / FRAMERATE);
+	nextPos->x = (2 * position->x) - prevPosition->x + totalForce->x * (1.0f / 60.0f);
+	nextPos->y = (2 * position->y) - prevPosition->y + totalForce->y * (1.0f / 60.0f);
+	nextPos->z = (2 * position->z) - prevPosition->z + totalForce->z * (1.0f / 60.0f);
 
 	// now return the new position
 	return nextPos;
 }
 
-void Point::Update(int sphereRadius, glm::vec3 objPos) {
+Vec3* Point::RK2() {
+	// create vector for the resulting position and velocity values that we'll need
+	Vec3* nextPos = new Vec3();
+	Vec3* nextVelocity = new Vec3();
+	Vec3* midVelocity = new Vec3();
+
+	// find the value of the next velocity using explicity Euler method
+	nextVelocity->x = velocity->x + totalForce->x * (1.0f / 60.0f);
+
+	return nextPos;
+}
+
+void Point::Update(int sphereRadius, Vec3 objPos) {
 	// update velocity value
 	velocity->x = totalForce->x * 0.1f;
 	velocity->y = totalForce->y * 0.1f;
@@ -80,7 +92,7 @@ void Point::Update(int sphereRadius, glm::vec3 objPos) {
 	float tempZ = position->z;
 
 	// update the positions
-	glm::vec3* nextPos = VerletIntegrationToPosition();
+	Vec3* nextPos = VerletIntegrationToPosition();
 
 	if (!isFixed) {
 		position->x = nextPos->x;
@@ -97,16 +109,16 @@ void Point::Update(int sphereRadius, glm::vec3 objPos) {
 	CheckCollision(sphereRadius, objPos);
 }
 
-void Point::CheckCollision(int sphereRadius, glm::vec3 objPos) {
+void Point::CheckCollision(int sphereRadius, Vec3 objPos) {
 	float ptDist; // used to compare radius to point-sphere distance
-	glm::vec3* dist = new glm::vec3(); // represents difference between point and sphere center
+	Vec3* dist = new Vec3(); // represents difference between point and sphere center
 	Subtract(dist, *position, objPos);
-	ptDist = GetLength(*dist) - (sphereRadius + radius); // counts as a sphere-sphere collision
+	ptDist = dist->GetLength() - (sphereRadius + radius); // counts as a sphere-sphere collision
 
 	// normalize distance
-	Normalize(*dist);
+	dist->Normalize();
 
-	glm::vec3* p = new glm::vec3(); // to determine where point should be if collision is detected
+	Vec3* p = new Vec3(); // to determine where point should be if collision is detected
 	MultiplicationByScalar(p, *dist, ptDist);
 
 	// check for collision, adjust position if so

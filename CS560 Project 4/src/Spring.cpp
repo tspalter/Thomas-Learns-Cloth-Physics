@@ -69,11 +69,11 @@ void Spring::ApplySpringForce() {
 	// apply the forces to the two points
 	// notice that the 2nd point receives the opposite force
 	p1->AddForce(fX, fY, fZ);
-	p1->AddForce(-fX, -fY, -fZ);
+	p2->AddForce(-fX, -fY, -fZ);
 }
 
 float Spring::GetDistance() {
-	glm::vec3* dist = new glm::vec3();
+	Vec3* dist = new Vec3();
 	Subtract(dist, *(p1->position), *(p2->position));
-	return GetLength(*dist);
+	return dist->GetLength();
 }

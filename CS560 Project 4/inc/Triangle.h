@@ -13,7 +13,7 @@ public:
 	// Pointers to the points of the individual triangle
 	Point* points[3];
 	// normal vec
-	glm::vec3* normal;
+	Vec3* normal;
 
 	// ctor and dtor
 	Triangle();

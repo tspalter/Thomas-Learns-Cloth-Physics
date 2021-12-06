@@ -42,7 +42,7 @@ public:
 	void DrawSprings();
 
 	// update the wire based on gravity
-	void Update(int sphereRadius, float gravForce, glm::vec3 gravDirection, float ks, float kd, float pointRadius, glm::vec3 objPos);
+	void Update(int sphereRadius, float gravForce, Vec3 gravDirection, float ks, float kd, float pointRadius, Vec3 objPos);
 	// generates the springs of the wire object
 	void GenerateSprings();
 	// calculates the normal of a specific point at column c and row r

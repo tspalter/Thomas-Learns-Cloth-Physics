@@ -6,7 +6,7 @@
 #include "../inc/Triangle.h"
 
 Triangle::Triangle() {
-	normal = new glm::vec3();
+	normal = new Vec3();
 }
 
 Triangle::~Triangle() {
@@ -53,8 +53,8 @@ void Triangle::DebugDraw(int resolution, bool showWireframe, bool flatShade) {
 }
 
 void Triangle::CalculateNormal() {
-	glm::vec3* v1 = new glm::vec3();
-	glm::vec3* v2 = new glm::vec3();
+	Vec3* v1 = new Vec3();
+	Vec3* v2 = new Vec3();
 
 	// v1 and v2 are the differences between the position of point[0]
 	// with the triangle's other two points

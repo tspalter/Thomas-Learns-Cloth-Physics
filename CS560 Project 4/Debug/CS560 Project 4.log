@@ -1,4 +1,4 @@
-﻿  Main.cpp
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.16299.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
-C:\Users\tcs11\Documents\FA21\CS560\Thomas Learns Cloth Physics\Thomas-Learns-Cloth-Physics\Includes\glad\glad.h(32): message : see previous definition of 'APIENTRY'
+﻿  Point.cpp
+  Wire.cpp
+  Generating Code...
   CS560 Project 4.vcxproj -> C:\Users\tcs11\Documents\FA21\CS560\Thomas Learns Cloth Physics\Thomas-Learns-Cloth-Physics\CS560 Project 4\Debug\CS560 Project 4.exe

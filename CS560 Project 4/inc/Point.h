@@ -24,11 +24,11 @@ public:
 	int adjTriangles[6]; // all triangles touching the point, up to 6 total
 
 	// vector pointer values
-	glm::vec3* position;
-	glm::vec3* prevPosition;
-	glm::vec3* totalForce;
-	glm::vec3* velocity;
-	glm::vec3* normal;
+	Vec3* position;
+	Vec3* prevPosition;
+	Vec3* totalForce;
+	Vec3* velocity;
+	Vec3* normal;
 	// check if point is anchored
 	bool isFixed;
 
@@ -47,13 +47,16 @@ public:
 	void DebugDraw();
 
 	// Verlet Integration function
-	glm::vec3* VerletIntegrationToPosition();
+	Vec3* VerletIntegrationToPosition();
+
+	// 2nd Order Runge-Kutta function
+	Vec3* RK2();
 
 	// Update point values
-	void Update(int sphereRadius, glm::vec3 objPos);
+	void Update(int sphereRadius, Vec3 objPos);
 
 	// Collision check with a sphere object
-	void CheckCollision(int radius, glm::vec3 objPos);
+	void CheckCollision(int radius, Vec3 objPos);
 
 };
 

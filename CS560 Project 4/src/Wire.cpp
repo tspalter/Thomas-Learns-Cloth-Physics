@@ -139,7 +139,7 @@ void Wire::DrawSprings() {
 	}
 }
 
-void Wire::Update(int sphereRadius, float gravForce, glm::vec3 gravDirection, float ks, float kd, float pointRadius, glm::vec3 objPos) {
+void Wire::Update(int sphereRadius, float gravForce, Vec3 gravDirection, float ks, float kd, float pointRadius, Vec3 objPos) {
 	// update forces on each point
 	for (int i = 0; i < resolution; i++) {
 		for (int j = 0; j < resolution; j++) {
@@ -228,7 +228,7 @@ void Wire::CalculatePointNormal(int c, int r) {
 		y += triangles[points[c][r].adjTriangles[i]]->normal->y;
 		z += triangles[points[c][r].adjTriangles[i]]->normal->z;
 
-		length += GetLength(*(triangles[points[c][r].adjTriangles[i]]->normal));
+		length += triangles[points[c][r].adjTriangles[i]]->normal->GetLength();
 	}
 
 	// update the normal values of the point
