@@ -25,3 +25,15 @@ void MultiplicationByScalar(Vec3* result, Vec3 v1, float scalar) {
 	result->y = v1.y * scalar;
 	result->z = v1.z * scalar;
 }
+
+void LinearMomentum(Vec3* result, Point p1) {
+	result->x = p1.m * p1.velocity->x;
+	result->y = p1.m * p1.velocity->y;
+	result->z = p1.m * p1.velocity->z;
+}
+
+void AngularMomentum(Vec3* result, Point p1) {
+	result->x = p1.m * p1.velocity->x * p1.radius;
+	result->y = p1.m * p1.velocity->y * p1.radius;
+	result->z = p1.m * p1.velocity->z * p1.radius;
+}

@@ -10,7 +10,8 @@ Triangle::Triangle() {
 }
 
 Triangle::~Triangle() {
-
+	delete normal;
+	delete points;
 }
 
 void Triangle::SetTriangle(Point* p1, Point* p2, Point* p3) {
@@ -63,4 +64,7 @@ void Triangle::CalculateNormal() {
 
 	// the cross product of v1 and v2 will give us the normal
 	CrossProduct(normal, *v1, *v2);
+
+	delete v2;
+	delete v1;
 }

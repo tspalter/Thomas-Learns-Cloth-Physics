@@ -14,6 +14,7 @@
 #include <iostream>
 #include <string>
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 
@@ -30,29 +31,12 @@
 #define SPHERE_RADIUS 100
 #define SPHERE_SLICES 20
 
-// refresh rate
-#define REFRESH_RATE 10
-
-// IDs used for callbacks and UI
+// IDs used for callbacks
 #define MESH_RESOLUTION_ID 100
-#define TEXTURE_ENABLED_ID 200
-#define SHOW_WIRE_FRAME_ID 201
-#define FLAT_SHADE_ID 202
-#define SHOW_POINTS_ID 203
-#define ENABLE_LIGHT_ID 300
-#define LIGHT_LEVEL_ID 301
-#define LIGHT_RED_COMPONENT_ID 302
-#define LIGHT_GREEN_COMPONENT_ID 303
-#define LIGHT_BLUE_COMPONENT_ID 304
-#define GRAVITY_CONSTANT_ID 400
-#define GRAVITY_DIRECTION_ID 401
-#define KS_ID 402
-#define KD_ID 403
-#define POINT_RADIUS_ID 404
-#define START_ID 500
-#define PAUSE_ID 501
-#define RESTART_ID 502
-#define FIGURE_ID 600
+#define LIGHT_LEVEL_ID 101
+#define START_ID 102
+#define PAUSE_ID 103
+#define RESTART_ID 104
 
 // Some additional global vars
 Wire* wireFrame;
@@ -69,6 +53,7 @@ bool showTriangles = true;
 bool showSprings = false;
 bool figure = false;
 bool isPaused = true;
+bool useRungeKutta = false;
 
 // this defaults the system to 30x30 (900) mass points
 // but can be adjusted by the user
@@ -89,6 +74,8 @@ Vec3* gravDirection;
 float ks = 20.0f;
 float kd = 0.2f;
 
+// point values
+float mass = 1.0f;
 float pointRadius = 5.0f;
 
 // Camera vars
@@ -273,7 +260,7 @@ void init() {
     glLoadIdentity();
 
     glMatrixMode(GL_MODELVIEW);
-    LoadTextureFromFile("Mantel.ppm");
+    LoadTextureFromFile("Cloth Texture.jpg");
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
     glEnable(GL_NORMALIZE);
@@ -373,19 +360,19 @@ void ControlCallback(int control) {
 
 // values that change on key press
 void KeyFunctions(unsigned char key, int x, int y) {
-    // simple input controls
+    // simple input controls for sphere position
     if (key == 'a' || key == 'A') // left
-        eye.x -= 50.0f;
+        objPos->x -= 5.0f;
     if (key == 'd' || key == 'D') // right
-        eye.x += 50.0f;
+        objPos->x += 5.0f;
     if (key == 's' || key == 'S') // down
-        eye.y -= 50.0f;
+        objPos->y -= 5.0f;
     if (key == 'w' || key == 'W') // up
-        eye.y += 50.0f;
+        objPos->y += 5.0f;
     if (key == 'q' || key == 'Q') // out
-        eye.z += 50.0f;
+        objPos->z += 5.0f;
     if (key == 'e' || key == 'E') // in
-        eye.z -= 50.0f;
+        objPos->z -= 5.0f;
     if (key == 'p' || key == 'P') // toggle points
         showPoints = !showPoints;
     if (key == 't' || key == 'T') // toggle texture
@@ -396,6 +383,24 @@ void KeyFunctions(unsigned char key, int x, int y) {
         flatShade = !flatShade;
     if (key == 'b' || key == 'B') // toggle springs
         showSprings = !showSprings;
+    if (key == 'l' || key == 'L') // toggle lighting
+        showSprings = !showSprings;
+    if (key == 'k' || key == 'K') { // toggle Runge-Kutta
+        useRungeKutta = !useRungeKutta;
+        InitWireframe();
+    }
+    if (key == 'm' || key == 'M') { // add mass
+        if (mass < 3.0f) {
+            mass += 0.5f;
+            InitWireframe();
+        }
+    }
+    if (key == 'n' || key == 'N') { // subtract mass
+        if (mass > 0.5f) {
+            mass -= 0.5f;
+            InitWireframe();
+        }
+    }
     if (key == '1')               // start simulation
         ControlCallback(START_ID);
     if (key == '2')               // pause simulation
@@ -421,12 +426,12 @@ void KeyFunctions(unsigned char key, int x, int y) {
 void Update(int i) {
     // check if system should be paused
     if (!isPaused) {
-        wireFrame->Update(SPHERE_RADIUS, gravForce, *gravDirection, ks, kd, pointRadius, *objPos);
+        wireFrame->Update(SPHERE_RADIUS, gravForce, *gravDirection, ks, kd, pointRadius, *objPos, useRungeKutta, mass);
         glutPostRedisplay();
     }
 
     // apply GLUT timer function and call recursively
-    glutTimerFunc(20, Update, 1);
+    glutTimerFunc(15, Update, 2);
 }
 
 
@@ -445,7 +450,7 @@ int main(int argc, char** argv) {
     glutReshapeFunc(Resize);
     glutMouseFunc(MouseCallback);
     glutKeyboardFunc(KeyFunctions);
-    glutTimerFunc(20, Update, 1);
+    glutTimerFunc(15, Update, 2);
     glutMotionFunc(MouseMotionCallback);
     
 
@@ -454,6 +459,13 @@ int main(int argc, char** argv) {
     InitWireframe();
 
     glutMainLoop();
+
+    // delete pointers
+    delete wireFrame;
+    delete texture;
+    delete dirLight;
+    delete gravDirection;
+    delete objPos;
 
 	return 0;
 }

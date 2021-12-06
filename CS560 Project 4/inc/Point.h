@@ -11,8 +11,8 @@
 
 class Point {
 public:
-	// mass of point
-	float mass;
+	// point mass
+	float m;
 
 	// index variables for the point in the mesh of the cloth
 	int posI, posJ;
@@ -42,7 +42,7 @@ public:
 	// set accumulated forces to 0
 	void ClearForces();
 	// add a force to the point's current force
-	void AddForce(float x, float y, float z);
+	void AddForce(float mass, float x, float y, float z);
 	// Debug Draw
 	void DebugDraw();
 
@@ -53,7 +53,7 @@ public:
 	Vec3* RK2();
 
 	// Update point values
-	void Update(int sphereRadius, Vec3 objPos);
+	void Update(int sphereRadius, Vec3 objPos, bool useRungeKutta, float mass);
 
 	// Collision check with a sphere object
 	void CheckCollision(int radius, Vec3 objPos);

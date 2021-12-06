@@ -24,11 +24,11 @@ public:
 	virtual ~Spring();
 
 	// update based on hook and elasticity coefficients
-	void Update(float ks_, float kd_);
+	void Update(float mass, float ks_, float kd_);
 	// debug draw
 	void DebugDraw();
 	// application of force by the spring
-	void ApplySpringForce();
+	void ApplySpringForce(float mass);
 	// find the distance between the spring's two points
 	float GetDistance();
 };

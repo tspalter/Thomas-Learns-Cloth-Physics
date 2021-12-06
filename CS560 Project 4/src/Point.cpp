@@ -7,6 +7,7 @@
 float FRAMERATE = 60.0f;
 
 Point::Point() {
+	m = 0.0f;
 	totalForce = new Vec3();
 	velocity = new Vec3();
 	normal = new Vec3();
@@ -14,7 +15,13 @@ Point::Point() {
 	numOfAdjTriangles = 0;
 }
 
-Point::~Point() { }
+Point::~Point() {
+	delete totalForce;
+	delete velocity;
+	delete normal;
+	delete position;
+	delete prevPosition;
+}
 
 void Point::SetPosition(float pX, float pY, float pZ, int i, int j) {
 	// position relative to the mesh index
@@ -32,10 +39,10 @@ void Point::ClearForces() {
 	totalForce->z = 0.0f;
 }
 
-void Point::AddForce(float x, float y, float z) {
-	totalForce->x += x;
-	totalForce->y += y;
-	totalForce->z += z;
+void Point::AddForce(float mass, float x, float y, float z) {
+	totalForce->x += mass * x;
+	totalForce->y += mass * y;
+	totalForce->z += mass * z;
 }
 
 void Point::DebugDraw() {
@@ -60,9 +67,9 @@ Vec3* Point::VerletIntegrationToPosition() {
 
 	// use Verlet integration to calculate each vector value
 	// next = 2*curr - prev + force*dt
-	nextPos->x = (2 * position->x) - prevPosition->x + totalForce->x * (1.0f / 60.0f);
-	nextPos->y = (2 * position->y) - prevPosition->y + totalForce->y * (1.0f / 60.0f);
-	nextPos->z = (2 * position->z) - prevPosition->z + totalForce->z * (1.0f / 60.0f);
+	nextPos->x = (2 * position->x) - prevPosition->x + totalForce->x / m * 0.1f * 0.1f;
+	nextPos->y = (2 * position->y) - prevPosition->y + totalForce->y / m * 0.1f * 0.1f;
+	nextPos->z = (2 * position->z) - prevPosition->z + totalForce->z / m * 0.1f * 0.1f;
 
 	// now return the new position
 	return nextPos;
@@ -74,13 +81,29 @@ Vec3* Point::RK2() {
 	Vec3* nextVelocity = new Vec3();
 	Vec3* midVelocity = new Vec3();
 
-	// find the value of the next velocity using explicity Euler method
-	nextVelocity->x = velocity->x + totalForce->x * (1.0f / 60.0f);
+	// find the value of the explicit next velocity using explicity Euler method
+	nextVelocity->x = 10 * velocity->x + 10 * totalForce->x * 0.1f * 0.1f;
+	nextVelocity->y = 10 * velocity->y + 10 * totalForce->y * 0.1f * 0.1f;
+	nextVelocity->z = 10 * velocity->z + 10 * totalForce->z * 0.1f * 0.1f;
+
+	// determine the "mid" velocity as an average of the current velocity and the explicit next velocity
+	midVelocity->x = (velocity->x + nextVelocity->x) / 2;
+	midVelocity->y = (velocity->x + nextVelocity->y) / 2;
+	midVelocity->z = (velocity->x + nextVelocity->z) / 2;
+
+	// finally, get the next position based on the 2nd order Runge-Kutta method
+	nextPos->x = (position->x) + midVelocity->x * 0.1f * 0.1f;
+	nextPos->y = (position->y) + midVelocity->y * 0.1f * 0.1f;
+	nextPos->z = (position->z) + midVelocity->z * 0.1f * 0.1f;
+
+	delete midVelocity;
+	delete nextVelocity;
 
 	return nextPos;
 }
 
-void Point::Update(int sphereRadius, Vec3 objPos) {
+void Point::Update(int sphereRadius, Vec3 objPos, bool useRungeKutta, float mass) {
+	m = mass;
 	// update velocity value
 	velocity->x = totalForce->x * 0.1f;
 	velocity->y = totalForce->y * 0.1f;
@@ -92,7 +115,13 @@ void Point::Update(int sphereRadius, Vec3 objPos) {
 	float tempZ = position->z;
 
 	// update the positions
-	Vec3* nextPos = VerletIntegrationToPosition();
+	Vec3* nextPos = new Vec3();
+	if (useRungeKutta) {
+		nextPos = RK2();
+	}
+	else {
+		nextPos = VerletIntegrationToPosition();
+	}
 
 	if (!isFixed) {
 		position->x = nextPos->x;
@@ -104,6 +133,8 @@ void Point::Update(int sphereRadius, Vec3 objPos) {
 	prevPosition->x = tempX;
 	prevPosition->y = tempY;
 	prevPosition->z = tempZ;
+
+	delete nextPos;
 
 	// now check for collision
 	CheckCollision(sphereRadius, objPos);
@@ -127,4 +158,7 @@ void Point::CheckCollision(int sphereRadius, Vec3 objPos) {
 		position->y += p->y;
 		position->z += p->z;
 	}
+
+	delete p;
+	delete dist;
 }

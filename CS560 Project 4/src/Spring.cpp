@@ -16,15 +16,16 @@ Spring::Spring(Point* p1_, Point* p2_, float normalLength_) {
 }
 
 Spring::~Spring() {
-
+	delete p1;
+	delete p2;
 }
 
-void Spring::Update(float ks_, float kd_) {
+void Spring::Update(float mass, float ks_, float kd_) {
 	ks = ks_;
 	kd = kd_;
 
 	// call force function with new coefficient values
-	ApplySpringForce();
+	ApplySpringForce(mass);
 }
 
 void Spring::DebugDraw() {
@@ -37,7 +38,7 @@ void Spring::DebugDraw() {
 	glEnd();
 }
 
-void Spring::ApplySpringForce() {
+void Spring::ApplySpringForce(float mass) {
 	// distance between both points in the spring
 	// We could also create a temporary vec3, but
 	// it's a bit easier access to the values we're 
@@ -68,8 +69,8 @@ void Spring::ApplySpringForce() {
 
 	// apply the forces to the two points
 	// notice that the 2nd point receives the opposite force
-	p1->AddForce(fX, fY, fZ);
-	p2->AddForce(-fX, -fY, -fZ);
+	p1->AddForce(mass, fX, fY, fZ);
+	p2->AddForce(mass, -fX, -fY, -fZ);
 }
 
 float Spring::GetDistance() {

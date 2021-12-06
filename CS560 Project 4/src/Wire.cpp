@@ -8,7 +8,7 @@
 Wire::Wire(int resolution_, int size) {
 	// think of resolution of length of one side of square cloth
 	resolution = resolution_;
-	delta = (float)size / ((float)resolution_ * 1.0f);
+	delta = (float)size / (float)resolution_;
 	numTriangles = (resolution_ - 1) * (resolution_ - 1) * 2;
 	numSprings = ((((2 * resolution_) - 1) + ((resolution_ - 1) * 2)) * (resolution_ - 1)) + (resolution_ - 1);
 	// points should be resolution*resolution
@@ -40,7 +40,9 @@ Wire::Wire(int resolution_, int size) {
 	GenerateSprings();
 }
 
-Wire::~Wire() { }
+Wire::~Wire() { 
+
+}
 
 void Wire::AddPoint(Point* point, int i, int j) {
 	points[i][j] = *point;
@@ -139,26 +141,27 @@ void Wire::DrawSprings() {
 	}
 }
 
-void Wire::Update(int sphereRadius, float gravForce, Vec3 gravDirection, float ks, float kd, float pointRadius, Vec3 objPos) {
+void Wire::Update(int sphereRadius, float gravForce, Vec3 gravDirection, float ks, float kd, float pointRadius, Vec3 objPos, bool useRungeKutta, float mass) {
 	// update forces on each point
+	std::cout << "M: " << mass << ", GravX: " << mass * gravDirection.x * gravForce << ", GravY: " << mass * gravDirection.y * gravForce << ", GravZ: " << mass * gravDirection.z * gravForce << std::endl;
 	for (int i = 0; i < resolution; i++) {
 		for (int j = 0; j < resolution; j++) {
 			points[i][j].radius = pointRadius;
 			// to make sure forces aren't additive
 			points[i][j].ClearForces();
-			points[i][j].AddForce(gravDirection.x * gravForce, gravDirection.y * gravForce, gravDirection.z * gravForce);
+			points[i][j].AddForce(mass, gravDirection.x * gravForce, gravDirection.y * gravForce, gravDirection.z * gravForce);
 		}
 	}
 
 	// update the springs
 	for (int i = 0; i < numSprings; i++) {
-		springs[i]->Update(ks, kd);
+		springs[i]->Update(mass, ks, kd);
 	}
 
 	// update point positions and check for collisions
 	for (int i = 0; i < resolution; i++) {
 		for (int j = 0; j < resolution; j++) {
-			points[i][j].Update(sphereRadius, objPos);
+			points[i][j].Update(sphereRadius, objPos, useRungeKutta, mass);
 		}
 	}
 }
@@ -208,7 +211,7 @@ void Wire::GenerateSprings() {
 				springs[springIndex] = new Spring(&points[i][j], &points[i + 1][j], delta);
 				springIndex++;
 
-				springs[springIndex] = new Spring(&points[i][j - 1], &points[i + 1][j], diagonalDelta);
+				springs[springIndex] = new Spring(&points[i][j - 1], &points[i + 1][j], delta);
 				springIndex++;
 			}
 		}
