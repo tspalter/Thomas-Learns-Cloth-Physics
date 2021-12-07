@@ -60,4 +60,9 @@ public:
 
 };
 
+// get the linear momentum of a given mass point
+void LinearMomentum(Vec3* result, Point* p1);
+// get the angular momentum of a given mass point
+void AngularMomentum(Vec3* result, Point* p1);
+
 #endif
